@@ -1,0 +1,1 @@
+from arcgis_proxytests.test_basic import BasicTest
