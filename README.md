@@ -1,33 +1,28 @@
-# Python Skeleton for Micorservices
+# arcgis-proxy
 
-## Getting started
+Arcgis-proxy is a micro service for the GFW API. It allows to make calls to ArcGIS Server using the GFW geostore.
+The proxy fetches the geostore geometry, converts it ESRI JSON and projects it into Web  Mercator projections and forwards the call to ArcGIS server.
+It returns the ArcGIS server response.
 
-### Requirements
+## Functionality
 
-You need to install Docker in your machine if you haven't already [Docker](https://www.docker.com/)
+In its current version the proxy only supports calls to ImageServer service for the `computeHistorgrams` function
 
-### Development
-
-Follow the next steps to set up the development environment in your machine.
-
-1. Clone the repo and go to the folder
-
-```ssh
-git clone https://github.com/Vizzuality/python-skeleton
-cd python-skeleton
+```
+/v1/arcgis-proxy/ImageServer/computeHistograms
 ```
 
-2. Run the ms.sh shell script in development mode.
+Parameters | Explaination | Data Type
+-----------|--------------|----------
+server | a known ArcGIS server instance (either gfw or forest-atlas) | string
+serverUrl | URL to the ArcGIS Server instance (server web adaptor). Use either server or serverUrl | URL
+service | the service name | String
+renderingRule | the rendering rule | JSON
+pixelSize | prixel size for calculation | integer
+geostore | geostore ID | hash
 
-```ssh
-./ps.sh develop
+
+Example
 ```
-
-If this is the first time you run it, it may take a few minutes.
-
-### Code structure
-
-The API has been packed in a Python module (ps). It creates and exposes a WSGI application. The core functionality
-has been divided in three different layers or submodules (Routes, Services and Models).
-
-There are also some generic submodules that manage the request validations, HTTP errors and the background tasks manager.
+http://production-api.globalforestwatch.org//v1/arcgis-proxy/ImageServer/computeHistograms?server=forest-atlas&service=eth/EthiopiaRestoration&geostore=d1193c16181805c30701dea9a173e30b&renderingRule={"rasterFunction":"Arithmetic","rasterFunctionArguments":{"Raster":"$1","Raster2":"$6","Operation":3}}&pixelSize=100
+```

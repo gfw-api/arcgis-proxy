@@ -13,7 +13,7 @@ from arcgis_proxy.utils.geostore import get_esrijson_wm
 image_endpoints = Blueprint('image_endpoints', __name__)
 
 
-@image_endpoints.route('/histograms', strict_slashes=False, methods=['GET'])
+@image_endpoints.route('/computeHistograms', strict_slashes=False, methods=['GET'])
 @validate_pixel_size
 @validate_rendering_rule
 @validate_imageserver

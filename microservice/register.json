@@ -2,12 +2,12 @@
 	"name": "#(service.name)",
 	"endpoints": [
 	{
-		"path": "/v1/arcgis-proxy/ImageServer/histograms",
+		"path": "/v1/arcgis-proxy/ImageServer/computeHistograms",
 		"method": "GET",
 		"binary": true,
 		"redirect": {
 			"method": "GET",
-			"path": "/api/v1/arcgis-proxy/ImageServer/histograms"
+			"path": "/api/v1/arcgis-proxy/ImageServer/computeHistograms"
 		}
 	}
 	]
