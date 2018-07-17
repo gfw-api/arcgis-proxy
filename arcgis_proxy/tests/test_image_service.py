@@ -9,19 +9,27 @@ import logging
 
 histogram_route = '/api/v1/arcgis-proxy/ImageServer/computeHistograms'
 geostore_id = '204c6ff1dae38a10953b19d452921283'
-server_response = {"histograms": [{"counts": [0, 282, 0, 1586, 2795, 6062, 0, 4904, 4946, 2046, 25749, 17, 0, 0, 52, 0, 8], "max": 16.5, "min": -0.5, "size": 17}]}
-esri_json = {'type': 'polygon', 'rings': [[[4230140.650144396, 1164132.904452777], [4252404.548303052, 1164132.904452777], [4252404.548303052, 1141504.3357174317], [4230140.650144396, 1141504.3357174317], [4230140.650144396, 1164132.904452777]]], '_ring': 0, 'spatialReference': {'wkid': 102100, 'latestWkid': 3857}}
+
+with open('arcgis_proxy/tests/fixtures/histogram.json') as src:
+    server_response = json.load(src)
+
+with open('arcgis_proxy/tests/fixtures/esrijson.json') as src:
+    esrijson = json.load(src)
+
+with open('arcgis_proxy/tests/fixtures/rendering_rule.json') as src:
+    rendering_rule = json.load(src)
+
 server_request = 'https://gis.forest-atlas.org/server/rest/services/eth/EthiopiaRestoration/ImageServer/computeHistograms'
-rendering_rule = '{"rasterFunction":"Arithmetic","rasterFunctionArguments":{"Raster":"$1","Raster2":"$6","Operation":3}}'
+#rendering_rule = '{"rasterFunction":"Arithmetic","rasterFunctionArguments":{"Raster":"$1","Raster2":"$6","Operation":3}}'
 
 
 def compose_query_params_histograms(server='forest-atlas',
                                     service='eth/EthiopiaRestoration',
-                                    rendering_rule= rendering_rule,
+                                    rendering_rule=json.dumps(rendering_rule),
                                     pixel_size=100,
                                     geostore_id=geostore_id):
 
-    # compose query parameter for ImageServer/computeHistograms endpoint
+    """ compose query parameter for ImageServer/computeHistograms endpoint """
 
     query_params = '?server={}&service={}&renderingRule={}&pixelSize={}&geostore={}'.format(
         server,
@@ -34,7 +42,7 @@ def compose_query_params_histograms(server='forest-atlas',
 
 def deserialize(response):
 
-    # deserialize response and look for errors
+    """ deserialize response and look for errors """
 
     deserialized_response = json.loads(response.data)
     if 'errors' in deserialized_response.keys():
@@ -47,8 +55,10 @@ def deserialize(response):
     return data, errors
 
 
-# This method will be used by the mock to replace requests.post to ImageServer
 def mocked_requests_post(*args, **kwargs):
+
+    """ This method will be used by the mock to replace requests.post to ImageServer """
+
     class MockResponse:
         def __init__(self, json_data, status_code):
             self.json_data = json_data
@@ -66,10 +76,16 @@ def mocked_requests_post(*args, **kwargs):
 
 def mocked_get_esrijson_wm(*args, **kwargs):
 
-    return esri_json
+    """ mock get_esrijson_wm function """
+
+    logging.debug('[MOCK]: args: {}'.format(args))
+
+    return esrijson
 
 
 class ImageServiceHistogramTest(unittest.TestCase):
+
+    """ Image Server Compute Histograms Test """
 
     def setUp(self):
         app.testing = True
@@ -82,9 +98,11 @@ class ImageServiceHistogramTest(unittest.TestCase):
 
     def make_request(self, request, error=False):
 
-        # make request to provided URL
-        # if requests is suppose to fail assert status code 400
-        # otherwise assert for status code 200
+        """
+        make request to provided URL
+        if requests is suppose to fail assert status code 400
+        otherwise assert for status code 200
+        """
 
         response = self.app.get(request, follow_redirects=True)
 
@@ -101,7 +119,8 @@ class ImageServiceHistogramTest(unittest.TestCase):
 
     def test_image_router_compute_histograms_no_server(self):
 
-        # using false rendering rule
+        """ using false rendering rule """
+
         logging.debug('[TEST]: Test compute histograms no server')
 
         server = ""
@@ -112,7 +131,8 @@ class ImageServiceHistogramTest(unittest.TestCase):
 
     def test_image_router_compute_histograms_false_server(self):
 
-        # using false rendering rule
+        """ using false rendering rule """
+
         logging.debug('[TEST]: Test compute histograms false server')
 
         server = "false-server"
@@ -123,7 +143,8 @@ class ImageServiceHistogramTest(unittest.TestCase):
 
     def test_image_router_compute_histograms_no_service(self):
 
-        # using false rendering rule
+        """ using false rendering rule """
+
         logging.debug('[TEST]: Test compute histograms no service')
 
         service = ""
@@ -134,7 +155,8 @@ class ImageServiceHistogramTest(unittest.TestCase):
 
     def test_image_router_compute_histograms_false_rendering_rule(self):
 
-        # using false rendering rule
+        """ using false rendering rule """
+
         logging.debug('[TEST]: Test compute histograms false rendering rule')
 
         rendering_rule = "False rule"
@@ -145,7 +167,8 @@ class ImageServiceHistogramTest(unittest.TestCase):
 
     def test_image_router_compute_histograms_no_rendering_rule(self):
 
-        # using no rendering rule
+        """ using no rendering rule """
+
         logging.debug('[TEST]: Test compute histograms no rendering rule')
 
         rendering_rule = ''
@@ -156,7 +179,8 @@ class ImageServiceHistogramTest(unittest.TestCase):
 
     def test_image_router_compute_histograms_false_pixel_size(self):
 
-        # using false pixel size
+        """ using false pixel size """
+
         logging.debug('[TEST]: Test compute histograms false pixel size')
 
         pixel_size = "One"
@@ -169,6 +193,11 @@ class ImageServiceHistogramTest(unittest.TestCase):
     @mock.patch('arcgis_proxy.routes.api.v1.image_router.get_esrijson_wm', side_effect=mocked_get_esrijson_wm)
     def test_image_router_compute_histograms(self, mock_geostore, mock_post):
 
+        """
+        actual call to compute histogram using correct params
+        expecting Image Server response
+
+        """
         logging.debug('[TEST]: Test compute histograms')
 
         query_params = compose_query_params_histograms()
@@ -182,9 +211,9 @@ class ImageServiceHistogramTest(unittest.TestCase):
 
             logging.debug('[TEST]: POST {}'.format(mock_post.call_args_list))
             self.assertIn(mock.call(server_request,
-                                    files={'geometry': (None, json.dumps(esri_json)),
+                                    files={'geometry': (None, json.dumps(esrijson)),
                                            'geometryType': (None, 'esriGeometryPolygon'),
-                                           'renderingRule': (None, json.dumps(rendering_rule)),
+                                           'renderingRule': (None, json.dumps(json.dumps(rendering_rule))),
                                            'pixelSize': (None, '100'),
                                            'f': (None, 'json')}), mock_post.call_args_list)
 

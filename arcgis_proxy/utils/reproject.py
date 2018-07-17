@@ -1,14 +1,14 @@
 from pyproj import Proj, transform
-import json
-
 import logging
 
 
 def reproject_esrijson(esrijson, s_epsg=4326, t_epsg=3857, t_wkid=102100):
 
-    # Reproject ESRI JSON from s_epsg to t_epsg
-    # default WGS84 -> Web Mercator
-    # Need Proj.4 library to work
+    """
+    Reproject ESRI JSON from s_epsg to t_epsg
+    default WGS84 -> Web Mercator
+    Need Proj.4 library to work
+    """
 
     s_proj = Proj(init='EPSG:{}'.format(s_epsg))
     t_proj = Proj(init='EPSG:{}'.format(t_epsg))

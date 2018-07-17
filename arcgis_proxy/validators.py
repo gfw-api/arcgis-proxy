@@ -15,7 +15,7 @@ def _validate_rendering_rule(rendering_rule):
 
     # must have a rendering rule and rule must be a valid JSON
 
-    #logging.debug('[VALIDATOR]: validate rendering rule')
+    # logging.debug('[VALIDATOR]: validate rendering rule: {}'.format(rendering_rule))
 
     if rendering_rule:
         try:
@@ -29,7 +29,7 @@ def _validate_rendering_rule(rendering_rule):
 def _validate_pixel_size(pixel_size):
     """pixelSize must be an integer or empty"""
 
-    #logging.debug('[VALIDATOR]: validate pixel size')
+    # logging.debug('[VALIDATOR]: validate pixel size')
 
     if pixel_size:
         try:
@@ -41,7 +41,7 @@ def _validate_pixel_size(pixel_size):
 def _validate_geostore(geostore):
     """must have a geostore ID"""
 
-    #logging.debug('[VALIDATOR]: validate geostore')
+    # logging.debug('[VALIDATOR]: validate geostore')
 
     if not geostore:
         return error(status=400, detail="Must provide a valid geostore ID")
@@ -50,12 +50,12 @@ def _validate_geostore(geostore):
 def _validate_server(server, server_url):
     """most provide server or serverUrl"""
 
-    #logging.debug('[VALIDATOR]: validate server')
+    # logging.debug('[VALIDATOR]: validate server')
 
     if server and server not in servers.keys():
         return error(status=400, detail="server not in list {}".format(servers.keys()))
 
-    #logging.debug('[VALIDATOR]: validate server url')
+    # logging.debug('[VALIDATOR]: validate server url')
 
     if not server_url and not server:
         return error(status=400, detail="either server or serverUrl is required")
@@ -64,7 +64,7 @@ def _validate_server(server, server_url):
 def _validate_service(service):
     """must provide service URI"""
 
-    #logging.debug('[VALIDATOR]: validate service')
+    # logging.debug('[VALIDATOR]: validate service')
 
     if not service:
         return error(status=400, detail="service is required")
@@ -72,6 +72,7 @@ def _validate_service(service):
 
 def validate_imageserver(func):
     """serviceUrl parameter must be a valid ArcGIS Image Server instance"""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
 
