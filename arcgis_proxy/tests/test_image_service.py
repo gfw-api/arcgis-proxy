@@ -1,8 +1,6 @@
 import unittest
 import json
 from arcgis_proxy import app
-import requests
-from httmock import all_requests, response, HTTMock, urlmatch
 from arcgis_proxy.config.servers import servers
 from unittest import mock
 from arcgis_proxy.routes.api.v1.image_router import compute_histograms
@@ -11,8 +9,8 @@ import logging
 
 histogram_route = '/api/v1/arcgis-proxy/ImageServer/computeHistograms'
 geostore_id = '204c6ff1dae38a10953b19d452921283'
-server_response = {"histogram": [1, 2, 3]}
-esri_json = {"key": "value"}
+server_response = {"histograms": [{"counts": [0, 282, 0, 1586, 2795, 6062, 0, 4904, 4946, 2046, 25749, 17, 0, 0, 52, 0, 8], "max": 16.5, "min": -0.5, "size": 17}]}
+esri_json = {'type': 'polygon', 'rings': [[[4230140.650144396, 1164132.904452777], [4252404.548303052, 1164132.904452777], [4252404.548303052, 1141504.3357174317], [4230140.650144396, 1141504.3357174317], [4230140.650144396, 1164132.904452777]]], '_ring': 0, 'spatialReference': {'wkid': 102100, 'latestWkid': 3857}}
 server_request = 'https://gis.forest-atlas.org/server/rest/services/eth/EthiopiaRestoration/ImageServer/computeHistograms'
 rendering_rule = '{"rasterFunction":"Arithmetic","rasterFunctionArguments":{"Raster":"$1","Raster2":"$6","Operation":3}}'
 

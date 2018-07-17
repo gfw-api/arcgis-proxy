@@ -38,7 +38,7 @@ def image_server_mock(url, request):
     return server_response
 
 
-class BasicTest(unittest.TestCase):
+class ParamsTest(unittest.TestCase):
 
     def setUp(self):
         app.testing = True
@@ -48,6 +48,18 @@ class BasicTest(unittest.TestCase):
 
     def tearDown(self):
         pass
+
+    def deserialize_error(self, response):
+        return json.loads(response.data)['errors'][0]['detail']
+
+    def make_false_request(self, request):
+        response = self.app.get(request, follow_redirects=True)
+        error = self.deserialize_error(response)
+        status_code = response.status_code
+
+        self.assertEqual(status_code, 400)
+
+        return error
 
     def deserialize(self, response):
         return json.loads(response.data)

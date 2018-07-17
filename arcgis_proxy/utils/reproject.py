@@ -3,6 +3,7 @@ import json
 
 import logging
 
+
 def reproject_esrijson(esrijson, s_epsg=4326, t_epsg=3857, t_wkid=102100):
 
     s_proj = Proj(init='EPSG:{}'.format(s_epsg))
