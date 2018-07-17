@@ -172,6 +172,9 @@ class ImageServiceHistogramTest(unittest.TestCase):
         logging.debug('[TEST]: Test compute histograms')
 
         query_params = compose_query_params_histograms()
+
+        # using app.test_request_context to fake a request,
+        # so that compute_histogram() knows what URL it should handle
         with app.test_request_context(path='{}{}'.format(histogram_route, query_params)):
             ch = compute_histograms()
             logging.debug('[TEST]: response:{}'.format(json.loads(ch[0].data)))
