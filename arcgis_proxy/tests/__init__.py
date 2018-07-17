@@ -1,1 +1,2 @@
-from arcgis_proxytests.test_basic import BasicTest
+from arcgis_proxy.tests.test_image_service import ImageServiceHistogramTest
+from arcgis_proxy.tests.test_utils import UtilsTest

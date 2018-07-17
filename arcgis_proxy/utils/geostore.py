@@ -4,6 +4,9 @@ from arcgis_proxy.utils.reproject import reproject_esrijson
 
 
 def get_geostore(geostore_id, format='esri'):
+
+    """ make request to geostore microservice for user given geostore ID """
+
     config = {
             'uri': '/geostore/{}?format={}'.format(geostore_id, format),
             'method': 'GET',
@@ -13,6 +16,8 @@ def get_geostore(geostore_id, format='esri'):
 
 
 def get_esrijson_wm(geostore_id):
+
+    """ get esrijson from geostore and reproject is into webmercator """
 
     geostore = get_geostore(geostore_id)
 
