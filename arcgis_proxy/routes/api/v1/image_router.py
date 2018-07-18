@@ -41,12 +41,14 @@ def compute_histograms():
     payload = {
         "geometry": (None, json.dumps(get_esrijson_wm(geostore_id))),
         "geometryType": (None, "esriGeometryPolygon"),
-        "renderingRule": (None, json.dumps(rendering_rule)),
+        "renderingRule": (None, rendering_rule),
         "pixelSize": (None, pixelSize),
         "f": (None, "json")
     }
 
-    logging.debug('[ROUTER]: esrijson: {}'.format(payload['geometry']))
+    logging.debug('[ROUTER]: payload: {}'.format(payload))
+
+    #logging.debug('[ROUTER]: esrijson: {}'.format(payload['geometry']))
 
     try:
         r = requests.post(service_url + "/computeHistograms", files=payload)
