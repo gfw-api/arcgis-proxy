@@ -213,7 +213,7 @@ class ImageServiceHistogramTest(unittest.TestCase):
             self.assertIn(mock.call(server_request,
                                     files={'geometry': (None, json.dumps(esrijson)),
                                            'geometryType': (None, 'esriGeometryPolygon'),
-                                           'renderingRule': (None, json.dumps(json.dumps(rendering_rule))),
+                                           'renderingRule': (None, json.dumps(rendering_rule)),
                                            'pixelSize': (None, '100'),
                                            'f': (None, 'json')}), mock_post.call_args_list)
 
