@@ -7,7 +7,7 @@ import requests
 import json
 import logging
 from arcgis_proxy.config.servers import servers
-from arcgis_proxy.utils.services import get_image_service_url
+from arcgis_proxy.utils.services import get_image_service_url, get_feature_service_url
 
 
 def _validate_rendering_rule(rendering_rule):
@@ -52,6 +52,18 @@ def _validate_pixel_size(pixel_size):
             int(pixel_size)
         except ValueError:
             return error(status=400, detail="pixelSize must be of Type Integer")
+
+
+def _validate_layer_id(layer_id):
+    """pixelSize must be an integer or empty"""
+
+    # logging.debug('[VALIDATOR]: validate layer_id')
+
+    if layer_id:
+        try:
+            int(layer_id)
+        except ValueError:
+            return error(status=400, detail="layerId must be of Type Integer")
 
 
 def _validate_geostore(geostore):
@@ -142,6 +154,7 @@ def validate_imageserver(func):
             logging.debug('[VALIDATOR]: {}'.format(json.loads(v[0].data)))
             return v
 
+        # TODO: avoid making service requests during validation. Only check format. Do the service check later during code excecution
         service_url = get_image_service_url(server, server_url, service)
         logging.debug('[VALIDATOR]: service_url {}'.format(service_url))
 
@@ -154,6 +167,65 @@ def validate_imageserver(func):
                 return error(status=400, detail="Not a valid Image Service URL")
         except:
             return error(status=400, detail="Not a valid Image Service URL")
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def validate_featureserver(func):
+    """serviceUrl parameter must be a valid ArcGIS Feature Server instance"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+
+        logging.info('[VALIDATOR]: validate feature service')
+
+        server = request.args.get('server', None)
+        service = request.args.get('service', None)
+        server_url = request.args.get('serverUrl', None)
+        layer_id = request.args.get('layerId', None)
+        geostore = request.args.get('geostore', None)
+
+        logging.debug('[VALIDATOR]: server = {}'.format(server))
+        logging.debug('[VALIDATOR]: service = {}'.format(service))
+        logging.debug('[VALIDATOR]: server_url = {}'.format(server_url))
+        logging.debug('[VALIDATOR]: layer_id = {}'.format(layer_id))
+        logging.debug('[VALIDATOR]: geostore = {}'.format(geostore))
+
+        v = _validate_geostore(geostore)
+        if v:
+            logging.debug('[VALIDATOR]: {}'.format(json.loads(v[0].data)))
+            return v
+
+        v = _validate_server(server, server_url)
+        if v:
+            logging.debug('[VALIDATOR]: {}'.format(json.loads(v[0].data)))
+            return v
+
+        v = _validate_service(service)
+        if v:
+            logging.debug('[VALIDATOR]: {}'.format(json.loads(v[0].data)))
+            return v
+
+        v = _validate_layer_id(layer_id)
+        if v:
+            logging.debug('[VALIDATOR]: {}'.format(json.loads(v[0].data)))
+            return v
+
+        # TODO: avoid making service requests during validation. Only check format. Do the service check later during code excecution
+        service_url = get_feature_service_url(server, server_url, service, layer_id)
+        logging.debug('[VALIDATOR]: service_url {}'.format(service_url))
+
+        try:
+            r = requests.get(service_url + "?f=pjson")
+            if r.status_code == 200:
+                if not (r.json()["type"] == 'Feature Layer'):
+                    return error(status=400, detail="Not a valid Feature Service URL")
+            else:
+                return error(status=400, detail="Not a valid Feature Service URL")
+        except:
+            return error(status=400, detail="Not a valid Feature Service URL")
 
         return func(*args, **kwargs)
 

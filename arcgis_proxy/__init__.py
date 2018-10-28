@@ -7,7 +7,7 @@ import logging
 from flask import Flask
 from arcgis_proxy.config import SETTINGS
 from arcgis_proxy.routes.api import error
-from arcgis_proxy.routes.api.v1 import image_endpoints
+from arcgis_proxy.routes.api.v1 import image_endpoints, feature_endpoints
 from arcgis_proxy.utils.files import load_config_json
 import CTRegisterMicroserviceFlask
 
@@ -23,6 +23,8 @@ app = Flask(__name__)
 # Routing
 
 app.register_blueprint(image_endpoints, url_prefix='/api/v1/arcgis-proxy/ImageServer')
+app.register_blueprint(feature_endpoints, url_prefix='/api/v1/arcgis-proxy/FeatureServer')
+
 
 # CT
 info = load_config_json('register')
@@ -36,8 +38,6 @@ CTRegisterMicroserviceFlask.register(
     ct_url=os.getenv('CT_URL'),
     url=os.getenv('LOCAL_URL')
 )
-
-
 
 
 @app.errorhandler(403)

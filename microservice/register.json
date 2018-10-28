@@ -9,6 +9,14 @@
 			"method": "GET",
 			"path": "/api/v1/arcgis-proxy/ImageServer/computeHistograms"
 		}
+	}, {
+		"path": "/v1/arcgis-proxy/FeatureServer/query",
+		"method": "GET",
+		"binary": true,
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/arcgis-proxy/FeatureServer/query"
+		}
 	}
 	]
 }
