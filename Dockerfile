@@ -1,20 +1,36 @@
-FROM python:3.6
+FROM python:3.7-alpine
 MAINTAINER Thomas Maschler thomas.maschler@wri.org
 
 ENV NAME arcgis_proxy
 ENV USER arcgis_proxy
+ENV PROJ4 http://download.osgeo.org/proj/proj-5.1.0.tar.gz
 
-RUN apt-get update && apt-get --assume-yes upgrade && \
-   apt-get --assume-yes install bash git libssl-dev \
-   libffi-dev gcc python3-dev musl-dev proj-bin
+RUN apk update && apk upgrade && \
+   apk add --no-cache --update bash git openssl-dev build-base alpine-sdk \
+   libffi-dev gcc python3-dev musl-dev \
+    && mkdir -p /usr/src \
+    && curl -SL $PROJ4 \
+    | tar -xzC /usr/src
 
-RUN addgroup $USER && adduser --shell /bin/bash --disabled-password --ingroup $USER $USER
+WORKDIR /usr/src/proj-5.1.0
+RUN ./configure --enable-python \
+    && make \
+    && make install \
+    && export PROJ_DIR=/usr/local/lib/
 
-RUN easy_install pip && pip install --upgrade pip
-RUN pip install virtualenv gunicorn gevent
+RUN addgroup $USER \
+    && adduser -s /bin/bash -D -G $USER $USER \
+    && easy_install pip \
+    && pip install --upgrade pip \
+    && pip install virtualenv cython gunicorn gevent numpy \
+    # pulling pyproj directly from github because of
+    # https://github.com/jswhit/pyproj/issues/136
+    && pip install git+https://github.com/jswhit/pyproj.git \
+    && mkdir -p /opt/$NAME \
+    && cd /opt/$NAME \
+    && virtualenv venv \
+    && source venv/bin/activate
 
-RUN mkdir -p /opt/$NAME
-RUN cd /opt/$NAME && virtualenv venv && . venv/bin/activate
 COPY requirements.txt /opt/$NAME/requirements.txt
 RUN cd /opt/$NAME && pip install -r requirements.txt
 
@@ -36,3 +52,7 @@ USER $USER
 
 # Launch script
 ENTRYPOINT ["./entrypoint.sh"]
+
+
+
+
