@@ -26,15 +26,20 @@ server_request = 'https://gis.forest-atlas.org/server/rest/services/eth/Ethiopia
 def compose_query_params_histograms(server='forest-atlas',
                                     service='eth/EthiopiaRestoration',
                                     rendering_rule=json.dumps(rendering_rule),
+                                    mosaic_rule=None,
                                     pixel_size=100,
                                     geostore_id=geostore_id):
 
     """ compose query parameter for ImageServer/computeHistograms endpoint """
 
-    query_params = '?server={}&service={}&renderingRule={}&pixelSize={}&geostore={}'.format(
+    if mosaic_rule is None:
+        mosaic_rule = ''
+
+    query_params = '?server={}&service={}&renderingRule={}&mosaicRule={}&pixelSize={}&geostore={}'.format(
         server,
         service,
         rendering_rule,
+        mosaic_rule,
         pixel_size,
         geostore_id)
     return query_params
@@ -165,6 +170,18 @@ class ImageServiceHistogramTest(unittest.TestCase):
 
         self.assertEqual(errors, 'renderingRule not a valid JSON')
 
+    def test_image_router_compute_histograms_false_mosaic_rule(self):
+
+        """ using false mosaic rule """
+
+        logging.debug('[TEST]: Test compute histograms false mosaic rule')
+
+        mosaic_rule = "False rule"
+        query_params = compose_query_params_histograms(mosaic_rule=mosaic_rule)
+        data, errors = self.make_request('{}{}'.format(histogram_route, query_params), error=True)
+
+        self.assertEqual(errors, 'mosaicRule not a valid JSON')
+
     def test_image_router_compute_histograms_no_rendering_rule(self):
 
         """ using no rendering rule """
@@ -214,6 +231,7 @@ class ImageServiceHistogramTest(unittest.TestCase):
                                     files={'geometry': (None, json.dumps(esrijson)),
                                            'geometryType': (None, 'esriGeometryPolygon'),
                                            'renderingRule': (None, json.dumps(rendering_rule)),
+                                           'mosaicRule': (None, None),
                                            'pixelSize': (None, '100'),
                                            'f': (None, 'json')}), mock_post.call_args_list)
 

@@ -53,6 +53,8 @@ class UtilsTest(unittest.TestCase):
 
     """ Test class for utils module """
 
+    maxDiff = None
+
     def setUp(self):
         app.testing = True
         app.config['TESTING'] = True
@@ -83,6 +85,9 @@ class UtilsTest(unittest.TestCase):
         logging.debug('[TEST]: Test get ESRIJSON in WM from geostore')
 
         ej = get_esrijson_wm(geostore_id)
+
+        logging.debug('[TEST]: esrijson_wm: {}'.format(esrijson_wm))
+
         self.assertEqual(ej, esrijson_wm)
         self.assertIn(mock.call(geostore_id), mock_geostore_id.call_args_list)
 
@@ -93,7 +98,7 @@ class UtilsTest(unittest.TestCase):
         logging.debug('[TEST]: Test reproject ESRIJSON')
 
         esrijson_proj = reproject_esrijson(esrijson)
-        self.assertEqual(esrijson_proj, esrijson_wm)
+        self.assertDictEqual(esrijson_proj, esrijson_wm)
 
     def test_get_image_service_url(self):
 
@@ -102,8 +107,8 @@ class UtilsTest(unittest.TestCase):
         logging.debug('[TEST]: Test service URL generation')
 
         url = get_image_service_url(server='forest-atlas', service='eth/EthiopiaRestoration')
-        self.assertEquals(url, service_url)
+        self.assertEqual(url, service_url)
 
         url = get_image_service_url(server='forest-atlas', service='eth/EthiopiaRestoration')
-        self.assertEquals(url, service_url)
+        self.assertEqual(url, service_url)
 
