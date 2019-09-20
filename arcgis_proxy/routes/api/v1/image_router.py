@@ -29,6 +29,9 @@ def compute_histograms():
     service = request.args.get('service', None)
     server_url = request.args.get('serverUrl', None)
     rendering_rule = request.args.get('renderingRule', None)
+    mosaic_rule = request.args.get('mosaicRule', None)
+    if mosaic_rule == '':
+        mosaic_rule = None
     pixelSize = request.args.get('pixelSize', None)
     geostore_id = request.args.get('geostore', None)
 
@@ -42,6 +45,7 @@ def compute_histograms():
         "geometry": (None, json.dumps(get_esrijson_wm(geostore_id))),
         "geometryType": (None, "esriGeometryPolygon"),
         "renderingRule": (None, rendering_rule),
+        "mosaicRule": (None, mosaic_rule),
         "pixelSize": (None, pixelSize),
         "f": (None, "json")
     }

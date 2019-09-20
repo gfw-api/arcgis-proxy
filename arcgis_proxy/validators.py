@@ -26,6 +26,22 @@ def _validate_rendering_rule(rendering_rule):
         return error(status=400, detail="Must provide a valid renderingRule")
 
 
+def _validate_mosaic_rule(mosaic_rule):
+    """Validation"""
+
+    # may have an optional mosaic rule. Rule must be a valid JSON
+
+    # logging.debug('[VALIDATOR]: validate mosaic rule: {}'.format(mosaic_rule))
+
+    if mosaic_rule:
+        try:
+            json.loads(mosaic_rule)
+        except ValueError:
+            return error(status=400, detail="mosaicRule not a valid JSON")
+    else:
+        pass
+
+
 def _validate_pixel_size(pixel_size):
     """pixelSize must be an integer or empty"""
 
@@ -84,6 +100,9 @@ def validate_imageserver(func):
         geostore = request.args.get('geostore', None)
         pixel_size = request.args.get('pixelSize', None)
         rendering_rule = request.args.get('renderingRule', None)
+        mosaic_rule = request.args.get('mosaicRule', None)
+        if mosaic_rule == '':
+            mosaic_rule = None
 
         logging.debug('[VALIDATOR]: server = {}'.format(server))
         logging.debug('[VALIDATOR]: service = {}'.format(service))
@@ -91,8 +110,14 @@ def validate_imageserver(func):
         logging.debug('[VALIDATOR]: geostore = {}'.format(geostore))
         logging.debug('[VALIDATOR]: pixel_size = {}'.format(pixel_size))
         logging.debug('[VALIDATOR]: rendering_rule = {}'.format(rendering_rule))
+        logging.debug('[VALIDATOR]: mosaic_rule = {}'.format(mosaic_rule))
 
         v = _validate_rendering_rule(rendering_rule)
+        if v:
+            logging.debug('[VALIDATOR]: {}'.format(json.loads(v[0].data)))
+            return v
+
+        v = _validate_mosaic_rule(mosaic_rule)
         if v:
             logging.debug('[VALIDATOR]: {}'.format(json.loads(v[0].data)))
             return v
