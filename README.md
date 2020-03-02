@@ -21,7 +21,7 @@ server | a known ArcGIS server instance (either gfw or forest-atlas) | string
 serverUrl | URL to the ArcGIS Server instance (server web adaptor). Use either server or serverUrl | URL
 service | the service name | String
 renderingRule | the rendering rule | JSON
-pixelSize | prixel size for calculation | integer
+pixelSize | pixel size for calculation | integer
 geostore | geostore ID | hash
 
 
