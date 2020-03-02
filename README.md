@@ -26,3 +26,14 @@ Example
 ```
 http://production-api.globalforestwatch.org//v1/arcgis-proxy/ImageServer/computeHistograms?server=forest-atlas&service=eth/EthiopiaRestoration&geostore=d1193c16181805c30701dea9a173e30b&renderingRule={"rasterFunction":"Arithmetic","rasterFunctionArguments":{"Raster":"$1","Raster2":"$6","Operation":3}}&pixelSize=100
 ```
+
+
+## Tests
+
+As this microservice relies on Google Earth Engine, tests require a valid `storage.json` or equivalent file. 
+At the time of this writing, actual tests use mock calls, so the real credential are only needed because Google's 
+library actually validates the credentials on startup. 
+
+Before you run the tests, be sure to install the necessary development libraries, using `pip install -r requirements_dev.txt`.
+
+Actual test execution is done by running the `pytest` executable on the root of the project.  
