@@ -3,10 +3,10 @@ kind: Service
 metadata:
   namespace: gfw
   labels:
-    name: {name}
-  name: {name}
+    name: arcgis-proxy
+  name: arcgis-proxy
 spec:
   ports:
     - port: 5700
   selector:
-    name: {name}
+    name: arcgis-proxy

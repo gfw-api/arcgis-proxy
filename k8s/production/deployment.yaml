@@ -3,18 +3,18 @@ kind: Deployment
 metadata:
   namespace: gfw
   labels:
-    name: {name}
-  name: {name}
+    name: arcgis-proxy
+  name: arcgis-proxy
 spec:
   revisionHistoryLimit: 2
   template:
     metadata:
       labels:
-        name: {name}
+        name: arcgis-proxy
     spec:
       containers:
-      - name: {name}
-        image: vizzuality/{name}
+      - name: arcgis-proxy
+        image: vizzuality/arcgis-proxy
         imagePullPolicy: Always
         resources:
           requests:
@@ -29,7 +29,7 @@ spec:
           - name: ENVIRONMENT
             value: prod
           - name: LOCAL_URL
-            value: http://{name}.gfw.svc.cluster.local:5700
+            value: http://arcgis-proxy.gfw.svc.cluster.local:5700
           - name: CT_URL
             valueFrom:
                 secretKeyRef:
