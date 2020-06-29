@@ -7,6 +7,12 @@ Arcgis-proxy is a micro service for the GFW API. It allows to make calls to ArcG
 The proxy fetches the geostore geometry, converts it ESRI JSON and projects it into Web  Mercator projections and forwards the call to ArcGIS server.
 It returns the ArcGIS server response.
 
+## Dependencies
+
+Dependencies on other Microservices:
+
+- [Geostore](https://github.com/gfw-api/gfw-geostore-api)
+
 ## Functionality
 
 In its current version the proxy only supports calls to ImageServer service for the `computeHistorgrams` function
