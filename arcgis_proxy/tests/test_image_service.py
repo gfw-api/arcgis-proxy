@@ -19,12 +19,11 @@ with open('arcgis_proxy/tests/fixtures/esrijson.json') as src:
 with open('arcgis_proxy/tests/fixtures/rendering_rule.json') as src:
     rendering_rule = json.load(src)
 
-server_request = 'https://gis.forest-atlas.org/server/rest/services/eth/EthiopiaRestoration/ImageServer/computeHistograms'
-#rendering_rule = '{"rasterFunction":"Arithmetic","rasterFunctionArguments":{"Raster":"$1","Raster2":"$6","Operation":3}}'
+server_request = 'https://gis-gfw.wri.org/arcgis/rest/services/image_services/analysis/ImageServer/computeHistograms'
 
 
-def compose_query_params_histograms(server='forest-atlas',
-                                    service='eth/EthiopiaRestoration',
+def compose_query_params_histograms(server='gfw',
+                                    service='image_services/analysis',
                                     rendering_rule=json.dumps(rendering_rule),
                                     mosaic_rule=None,
                                     pixel_size=100,

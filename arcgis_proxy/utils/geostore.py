@@ -1,4 +1,4 @@
-from CTRegisterMicroserviceFlask import request_to_microservice
+from RWAPIMicroservicePython import request_to_microservice
 from arcgis_proxy.routes.api import error
 from arcgis_proxy.utils.reproject import reproject_esrijson
 

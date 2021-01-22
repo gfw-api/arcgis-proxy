@@ -9,7 +9,7 @@ from arcgis_proxy.config import SETTINGS
 from arcgis_proxy.routes.api import error
 from arcgis_proxy.routes.api.v1 import image_endpoints
 from arcgis_proxy.utils.files import load_config_json
-import CTRegisterMicroserviceFlask
+import RWAPIMicroservicePython
 
 logging.basicConfig(
     level=SETTINGS.get('logging', {}).get('level'),
@@ -27,14 +27,16 @@ app.register_blueprint(image_endpoints, url_prefix='/api/v1/arcgis-proxy/ImageSe
 # CT
 info = load_config_json('register')
 swagger = load_config_json('swagger')
-CTRegisterMicroserviceFlask.register(
+RWAPIMicroservicePython.register(
     app=app,
     name='arcgis_proxy',
     info=info,
     swagger=swagger,
-    mode=CTRegisterMicroserviceFlask.AUTOREGISTER_MODE if os.getenv('CT_REGISTER_MODE') and os.getenv('CT_REGISTER_MODE') == 'auto' else CTRegisterMicroserviceFlask.NORMAL_MODE,
+    mode=RWAPIMicroservicePython.AUTOREGISTER_MODE if os.getenv('CT_REGISTER_MODE') and os.getenv('CT_REGISTER_MODE') == 'auto' else RWAPIMicroservicePython.NORMAL_MODE,
     ct_url=os.getenv('CT_URL'),
-    url=os.getenv('LOCAL_URL')
+    url=os.getenv('LOCAL_URL'),
+    token=os.getenv('CT_TOKEN'),
+    api_version=os.getenv('API_VERSION')
 )
 
 
