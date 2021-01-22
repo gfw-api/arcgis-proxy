@@ -1,5 +1,6 @@
 import json
 
+import RWAPIMicroservicePython
 import pytest
 import requests_mock
 
@@ -64,6 +65,8 @@ USERS = {
     }
 }
 
+RWAPIMicroservicePython.CT_URL = 'http://ct-url.com'
+
 
 @pytest.fixture
 def client():
@@ -76,31 +79,54 @@ def client():
 
 @requests_mock.Mocker(kw='mocker')
 def test_compute_histograms_without_rendering_rule(client, mocker):
-    response = client.get(
-        '/api/v1/arcgis-proxy/ImageServer/computeHistograms?loggedUser={}'.format(json.dumps(USERS['MICROSERVICE'])))
+    get_user_data_calls = mocker.get('http://ct-url.com/auth/user/me', status_code=200,
+                                     json=json.dumps(USERS['MICROSERVICE']))
+
+    response = client.get('/api/v1/arcgis-proxy/ImageServer/computeHistograms',
+                          headers={'Authorization': 'Bearer abcd'})
     assert response.data == b'{"errors":[{"detail":"Must provide a valid renderingRule","status":400}]}\n'
     assert response.status_code == 400
+    assert get_user_data_calls.called
+    assert get_user_data_calls.call_count == 1
 
 
 @requests_mock.Mocker(kw='mocker')
 def test_compute_histograms_without_geostore_id(client, mocker):
+    get_user_data_calls = mocker.get('http://ct-url.com/auth/user/me', status_code=200,
+                                     json=json.dumps(USERS['MICROSERVICE']))
+
     response = client.get(
-        '/api/v1/arcgis-proxy/ImageServer/computeHistograms?loggedUser={}&renderingRule={}'.format(json.dumps(USERS['MICROSERVICE']), json.dumps({})))
+        '/api/v1/arcgis-proxy/ImageServer/computeHistograms?renderingRule={}'.format(json.dumps({})),
+        headers={'Authorization': 'Bearer abcd'})
     assert response.data == b'{"errors":[{"detail":"Must provide a valid geostore ID","status":400}]}\n'
     assert response.status_code == 400
+    assert get_user_data_calls.called
+    assert get_user_data_calls.call_count == 1
 
 
 @requests_mock.Mocker(kw='mocker')
 def test_compute_histograms_without_server_url(client, mocker):
+    get_user_data_calls = mocker.get('http://ct-url.com/auth/user/me', status_code=200,
+                                     json=json.dumps(USERS['MICROSERVICE']))
+
     response = client.get(
-        '/api/v1/arcgis-proxy/ImageServer/computeHistograms?loggedUser={}&renderingRule={}&geostore=1234'.format(json.dumps(USERS['MICROSERVICE']), json.dumps({})))
+        '/api/v1/arcgis-proxy/ImageServer/computeHistograms?renderingRule={}&geostore=1234'.format(json.dumps({})),
+        headers={'Authorization': 'Bearer abcd'})
     assert response.data == b'{"errors":[{"detail":"either server or serverUrl is required","status":400}]}\n'
     assert response.status_code == 400
+    assert get_user_data_calls.called
+    assert get_user_data_calls.call_count == 1
 
 
 @requests_mock.Mocker(kw='mocker')
 def test_compute_histograms_without_service(client, mocker):
+    get_user_data_calls = mocker.get('http://ct-url.com/auth/user/me', status_code=200,
+                                     json=json.dumps(USERS['MICROSERVICE']))
+
     response = client.get(
-        '/api/v1/arcgis-proxy/ImageServer/computeHistograms?loggedUser={}&renderingRule={}&geostore=1234&serverUrl=http://google.com'.format(json.dumps(USERS['MICROSERVICE']), json.dumps({})))
+        '/api/v1/arcgis-proxy/ImageServer/computeHistograms?renderingRule={}&geostore=1234&serverUrl=http://google.com'.format(
+            json.dumps(json.dumps({}))), headers={'Authorization': 'Bearer abcd'})
     assert response.data == b'{"errors":[{"detail":"service is required","status":400}]}\n'
     assert response.status_code == 400
+    assert get_user_data_calls.called
+    assert get_user_data_calls.call_count == 1
