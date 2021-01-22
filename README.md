@@ -1,9 +1,10 @@
-# arcgis-proxy
+# Arcgis proxy microservice
 
-[![Build Status](https://travis-ci.org/gfw-api/arcgis-proxy.svg?branch=develop)](https://travis-ci.org/gfw-api/arcgis-proxy)
+[![Build Status](https://travis-ci.com/gfw-api/arcgis-proxy.svg?branch=dev)](https://travis-ci.com/gfw-api/arcgis-proxy)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/cccb3b1b648ce4686ca5/test_coverage)](https://codeclimate.com/github/gfw-api/arcgis-proxy/test_coverage)
 
-Arcgis-proxy is a micro service for the GFW API. It allows to make calls to ArcGIS Server using the GFW geostore.
+Arcgis-proxy is a microservice for the GFW API. It allows making calls to ArcGIS Server using the GFW geostore.
+
 The proxy fetches the geostore geometry, converts it ESRI JSON and projects it into Web  Mercator projections and forwards the call to ArcGIS server.
 It returns the ArcGIS server response.
 
@@ -21,7 +22,7 @@ In its current version the proxy only supports calls to ImageServer service for 
 /v1/arcgis-proxy/ImageServer/computeHistograms
 ```
 
-Parameters | Explaination | Data Type
+Parameters | Explanation | Data Type
 -----------|--------------|----------
 server | a known ArcGIS server instance (either gfw or forest-atlas) | string
 serverUrl | URL to the ArcGIS Server instance (server web adaptor). Use either server or serverUrl | URL
