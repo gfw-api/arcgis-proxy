@@ -1,12 +1,22 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: gfw
   labels:
     name: arcgis-proxy
   name: arcgis-proxy
+  namespace: gfw
 spec:
+  progressDeadlineSeconds: 2147483647
+  replicas: 1
   revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      name: arcgis-proxy
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -22,15 +32,7 @@ spec:
                     values:
                       - apps
       containers:
-        - name: arcgis-proxy
-          image: vizzuality/arcgis-proxy
-          imagePullPolicy: Always
-          resources:
-            requests:
-              memory: "128Mi"
-            limits:
-              memory: "512Mi"
-          args:
+        - args:
             - start
           env:
             - name: PORT
@@ -42,25 +44,40 @@ spec:
             - name: CT_URL
               valueFrom:
                 secretKeyRef:
-                  name: mssecrets
                   key: CT_URL
+                  name: mssecrets
             - name: CT_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: mssecrets
                   key: CT_TOKEN
+                  name: mssecrets
             - name: CT_REGISTER_MODE
               valueFrom:
                 secretKeyRef:
-                  name: mssecrets
                   key: CT_REGISTER_MODE
+                  name: mssecrets
             - name: API_VERSION
               valueFrom:
                 secretKeyRef:
-                  name: mssecrets
                   key: API_VERSION
-
+                  name: mssecrets
+          image: vizzuality/arcgis-proxy
+          imagePullPolicy: Always
+          name: arcgis-proxy
           ports:
             - containerPort: 5700
-
+              protocol: TCP
+          resources:
+            limits:
+              memory: 512Mi
+            requests:
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: regcred
       restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: { }
+      terminationGracePeriodSeconds: 30
