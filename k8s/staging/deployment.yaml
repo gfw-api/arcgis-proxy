@@ -61,7 +61,7 @@ spec:
                 secretKeyRef:
                   key: API_VERSION
                   name: mssecrets
-          image: vizzuality/arcgis-proxy
+          image: gfwdockerhub/arcgis-proxy
           imagePullPolicy: Always
           name: arcgis-proxy
           ports:

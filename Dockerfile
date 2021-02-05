@@ -10,7 +10,7 @@ RUN apt-get update && apt-get --assume-yes upgrade && \
 
 RUN addgroup $USER && adduser --shell /bin/bash --disabled-password --ingroup $USER $USER
 
-RUN easy_install pip && pip install --upgrade pip
+RUN pip install --upgrade pip
 RUN pip install virtualenv gunicorn gevent
 
 RUN mkdir -p /opt/$NAME
