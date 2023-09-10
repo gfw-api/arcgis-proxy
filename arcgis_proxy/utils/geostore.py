@@ -3,23 +3,21 @@ from arcgis_proxy.routes.api import error
 from arcgis_proxy.utils.reproject import reproject_esrijson
 
 
-def get_geostore(geostore_id, format='esri'):
-
+def get_geostore(geostore_id, api_key, format='esri'):
     """ make request to geostore microservice for user given geostore ID """
 
-    config = {
-            'uri': '/geostore/{}?format={}'.format(geostore_id, format),
-            'method': 'GET',
-    }
+    return request_to_microservice(
+        uri=f'/v2/geostore/{geostore_id}?format={format}',
+        method='GET',
+        api_key=api_key
+    )
 
-    return request_to_microservice(config)
 
-
-def get_esrijson_wm(geostore_id):
+def get_esrijson_wm(geostore_id, api_key):
 
     """ get esrijson from geostore and reproject is into webmercator """
 
-    geostore = get_geostore(geostore_id)
+    geostore = get_geostore(geostore_id, api_key)
 
     if "errors" in geostore.keys():
         return error(status=400, detail=geostore["errors"])

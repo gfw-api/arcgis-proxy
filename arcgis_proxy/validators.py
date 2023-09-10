@@ -152,8 +152,8 @@ def validate_imageserver(func):
                     return error(status=400, detail="Not a valid Image Service URL")
             else:
                 return error(status=400, detail="Not a valid Image Service URL")
-        except:
-            return error(status=400, detail="Not a valid Image Service URL")
+        except Exception as e:
+            return error(status=400, detail=e)
 
         return func(*args, **kwargs)
 

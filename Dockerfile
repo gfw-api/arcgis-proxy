@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.11-bullseye
 MAINTAINER Thomas Maschler thomas.maschler@wri.org
 
 ENV NAME arcgis_proxy
@@ -22,7 +22,7 @@ RUN cd /opt/$NAME && pip install -r requirements_dev.txt
 
 COPY entrypoint.sh /opt/$NAME/entrypoint.sh
 COPY main.py /opt/$NAME/main.py
-COPY test.py /opt/$NAME/test.py
+COPY tests /opt/$NAME/tests
 COPY gunicorn.py /opt/$NAME/gunicorn.py
 
 # Copy the application folder inside the container
