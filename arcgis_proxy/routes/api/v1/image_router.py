@@ -42,7 +42,7 @@ def compute_histograms():
     # values need to be tuples with the first value set to None
 
     payload = {
-        "geometry": (None, json.dumps(get_esrijson_wm(geostore_id))),
+        "geometry": (None, json.dumps(get_esrijson_wm(geostore_id, request.headers.get("x-api-key")))),
         "geometryType": (None, "esriGeometryPolygon"),
         "renderingRule": (None, rendering_rule),
         "mosaicRule": (None, mosaic_rule),

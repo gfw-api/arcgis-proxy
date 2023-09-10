@@ -1,7 +1,7 @@
 """Main Script"""
 
 import os
-from arcgis_proxy import app
+from arcgis_proxy.app import app
 
 
 # This is only used when running locally. When running live, Gunicorn runs
