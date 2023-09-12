@@ -7,7 +7,7 @@ def get_geostore(geostore_id, api_key, format='esri'):
     """ make request to geostore microservice for user given geostore ID """
 
     return request_to_microservice(
-        uri=f'/v2/geostore/{geostore_id}?format={format}',
+        uri=f'/v1/geostore/{geostore_id}?format={format}',
         method='GET',
         api_key=api_key
     )
