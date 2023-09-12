@@ -39,7 +39,7 @@ def test_get_geostore(client, mocker):
 
     assert result == geostore
     assert (
-        f"/v2/geostore/{geostore_id}?format=esri"
+        f"/v1/geostore/{geostore_id}?format=esri"
         in f"{mocked.last_request.path}?{mocked.last_request.query}"
     )
 
